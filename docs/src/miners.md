@@ -1,0 +1,6 @@
+# Miners
+
+```@docs
+Miners
+AngularMiner
+```
