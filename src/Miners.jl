@@ -79,10 +79,10 @@ Enum for possible triplet types for [`TripletMarginMiner`](@ref). Supported stra
     - all
 """
 @enum TripletTypes begin
-    easy
-    semihard
-    hard
-    all
+    easy_triplet
+    semihard_triplet
+    hard_triplet
+    all_triplet
 end
 
 """

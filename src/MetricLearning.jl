@@ -13,6 +13,7 @@ export DotProductSimilarity
 export EuclideanDistance
 export LpDistance
 export SNRDistance
+export compute_dist_matrix
 
 export Miners
 export AngularMiner

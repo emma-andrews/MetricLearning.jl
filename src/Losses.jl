@@ -1,6 +1,6 @@
 using LinearAlgebra
 
-"""
+@doc raw"""
     angular_loss(embeddings, labels; α = 0.5)
 
 Calculates the angular loss for given embeddings and labels. This loss is defined as
