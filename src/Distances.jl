@@ -1,3 +1,4 @@
+using Statistics
 ###########################################################
 #
 # Abstract Distance type
@@ -63,9 +64,16 @@ d = \frac{query\_embeds \cdot ref\_embeds}{||query\_embeds||\,||ref\_embeds||}
 ```
 """
 function compute_dist_matrix(distance::DotProductSimilarity, query_embeds, ref_embeds)
-    result = query_embeds * ref_embeds
-    if distance.normalize
-        result = result / (norm(query_embeds) * norm(ref_embeds))
+    num_rows = size(query_embeds, 1)
+    result = zeros(num_rows, num_rows)
+
+    for i in 1..num_rows
+        for j in 1..num_rows
+            result[i, j] = dot(query_embeds[i], ref_embeds[j])
+            if distance.normalize
+                result[i, j] = result[i, j] / (norm(query_embeds[i]) * norm(ref_embeds[j]))
+            end
+        end
     end
     return result
 end
@@ -84,7 +92,7 @@ end
 Calculate Euclidean distance between ``query\_embeds`` and ``ref\_embeds``:
 """
 function compute_dist_matrix(distance::EuclideanDistance, query_embeds, ref_embeds)
-
+    return compute_dist_matrix(LpDistance(2), query_embeds, ref_embeds)
 end
 
 """
@@ -104,8 +112,16 @@ Calculate Lp distance between ``query\_embeds`` and ``ref\_embeds``:
 d = ||query\_embeds \cdot ref\_embeds||_p
 ```
 """
-function compute_dist_matrix(distance::EuclideanDistance, query_embeds, ref_embeds)
-    return norm(query_embeds * ref_embeds, distance.p)
+function compute_dist_matrix(distance::LpDistance, query_embeds, ref_embeds)
+    num_rows = size(query_embeds, 1)
+
+    result = zeros(num_rows, num_rows)
+    for i in 1..num_rows
+        for j in 1..num_rows
+            result[i, j] = norm(query_embeds[i] - ref_embeds[j], distance.p)
+        end
+    end
+    return result
 end
 
 """
@@ -114,4 +130,21 @@ end
 Calculate Signal-to-Noise Ratio distance between ``x`` and ``y``.
 """
 struct SNRDistance <: Distance
+end
+
+@doc raw"""
+    compute_dist_matrix(distance::SNRDistance, query_embeds, ref_embeds)
+
+Calculate SNR distance between ``query\_embeds`` and ``ref\_embeds``:
+"""
+function compute_dist_matrix(distance::SNRDistance, query_embeds, ref_embeds)
+    num_rows = size(query_embeds, 1)
+
+    result = zeros(num_rows, num_rows)
+    for i in 1..num_rows
+        for j in 1..num_rows
+            result[i, j] = var(query_embeds[i] - ref_embeds[j]) / var(query_embeds[i])
+        end
+    end
+    return result
 end

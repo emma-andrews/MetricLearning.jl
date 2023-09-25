@@ -95,3 +95,7 @@ struct TripletMarginMiner <: Miner
     triplet_type::TripletTypes
     distance::Distance
 end
+
+function mine(miner::Miner, labels, ref_labels)
+    
+end
